@@ -31,7 +31,7 @@ export function Sidebar({ restricted }: SidebarProps) {
 
   return (
     <aside className="sidebar">
-      <div className="flex items-center gap-2.5 px-2 pb-[18px] font-semibold text-[15px]">
+      <Link href="/" className="flex items-center gap-2.5 px-2 pb-[18px] font-semibold text-[15px] hover:opacity-80 transition-opacity">
         <div
           className="size-7 rounded-[7px] grid place-items-center font-bold text-sm text-white"
           style={{ background: "var(--accent)" }}
@@ -39,7 +39,7 @@ export function Sidebar({ restricted }: SidebarProps) {
           T
         </div>
         Taskflow
-      </div>
+      </Link>
 
       <div className="text-[11px] uppercase tracking-wider text-[var(--text-subtle)] font-semibold px-2 py-3.5 pb-1.5">
         Workspace

@@ -21,16 +21,14 @@ export function Topbar({
 }: TopbarProps) {
   return (
     <div className="topbar">
-      <div>
-        <div className="text-[17px] font-semibold tracking-tight">{title}</div>
-        {subtitle && (
-          <div className="text-[12.5px] text-[var(--text-subtle)] mono hidden sm:block">{subtitle}</div>
-        )}
+      <div className="topbar-heading">
+        <h1 className="topbar-title">{title}</h1>
+        {subtitle && <p className="topbar-subtitle">{subtitle}</p>}
       </div>
       <div className="flex-1" />
       {showSearch && onSearchChange && (
-        <div className="relative w-[150px] sm:w-[260px]">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-subtle)] text-sm">
+        <div className="topbar-search">
+          <span className="topbar-search-icon" aria-hidden>
             🔍
           </span>
           <input
@@ -38,13 +36,12 @@ export function Topbar({
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search tasks…"
-            className="w-full py-2 pl-8 pr-3 border rounded-[var(--radius-sm)] text-sm bg-[var(--surface)]"
-            style={{ borderColor: "var(--border-strong)" }}
+            className="topbar-search-input"
           />
         </div>
       )}
       {showNewTask && onNewTask && (
-        <button type="button" className="btn btn-primary" onClick={onNewTask}>
+        <button type="button" className="btn btn-primary shrink-0" onClick={onNewTask}>
           + New task
         </button>
       )}

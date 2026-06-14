@@ -27,12 +27,6 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-const publicPaths = ["/login", "/signup"];
-
-function isPublicPath(pathname: string) {
-  return publicPaths.some((path) => pathname.startsWith(path));
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
@@ -48,10 +42,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (isPublicPath(window.location.pathname)) {
-      setIsLoading(false);
-      return;
-    }
     refresh().finally(() => setIsLoading(false));
   }, [refresh]);
 
@@ -84,7 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(async () => {
     await authApi.logout();
     setUser(null);
-    router.replace("/login");
+    router.replace("/");
   }, [router]);
 
   const value = useMemo(

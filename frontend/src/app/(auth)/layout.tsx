@@ -1,11 +1,13 @@
+import Link from "next/link";
+
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
       <div className="hidden lg:flex flex-col justify-between bg-violet-700 text-white p-14">
-        <div className="flex items-center gap-3 font-semibold text-lg">
+        <Link href="/" className="flex items-center gap-3 font-semibold text-lg hover:opacity-90 transition-opacity">
           <div className="size-8 rounded-lg bg-white/15 grid place-items-center font-bold">T</div>
           Taskflow
-        </div>
+        </Link>
         <div>
           <h1 className="text-4xl font-semibold tracking-tight max-w-xs">Plan less. Ship more.</h1>
           <p className="mt-4 text-white/80 max-w-md">
