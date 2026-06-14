@@ -1,0 +1,58 @@
+---
+description: Task Management Assessment — locked decisions, data model, API contract, phase order
+alwaysApply: true
+---
+
+# Project
+
+Full-stack Task Management app. Express (API) + Next.js App Router (FE) + PostgreSQL (Neon) + Prisma.
+
+**Package manager: Bun** — `bun add`, `bun install`, `bun run`. See `.cursor/rules/bun.mdc`.
+
+## Phase order — one at a time
+
+1. `docs/phases/01-backend-crud.md` — Express CRUD + validation + error envelope
+2. `docs/phases/02-auth.md` — JWT cookie + bcrypt + ownership scoping
+3. `docs/phases/03-frontend-core.md` — list, form, mutations, UX states
+4. `docs/phases/04-search-sort-filter.md` — URL-driven filters/search/sort
+5. `docs/phases/05-tests-deploy.md` — tests, bonuses, deploy
+
+Do not implement Phase N+1 until Phase N checklist is done.
+
+## Locked decisions
+
+- **Auth:** JWT in `httpOnly` cookie — never localStorage
+- **Proxy:** Next.js rewrites `/api/*` → backend; browser never calls Render URL directly
+- **Filters live in URL** — `useSearchParams` is source of truth; React Query key = param object
+- **Ownership at DB layer** — `where: { id, userId: req.userId }` on every task query
+- **Error envelope:** `{ error: { code: string; message: string; details?: any } }` on all non-2xx
+
+## Data model (Prisma — frozen)
+
+```
+User: id, name, email, password(hash), role(USER|ADMIN), status(PENDING|APPROVED|REJECTED), tasks[], createdAt
+Task: id, title, description?, status(TODO|IN_PROGRESS|DONE), priority(LOW|MEDIUM|HIGH), dueDate?, order(Int), userId, createdAt, updatedAt
+```
+
+- `User.status` defaults to `PENDING`. Login rejects with `PENDING_APPROVAL` code until admin approves.
+- `Task.order` is used for manual drag-to-reorder (default sort). Lower = higher in list.
+
+## API contract base `/api`
+
+| Method | Route | Auth | Role | Success |
+|--------|-------|------|------|---------|
+| POST | /auth/signup | — | — | 201 (status=PENDING) |
+| POST | /auth/login | — | — | 200 + cookie OR 403 PENDING_APPROVAL |
+| POST | /auth/logout | — | — | 204 |
+| GET | /auth/me | ✓ | any | 200 {user} |
+| POST | /tasks | ✓ | approved | 201 {task} |
+| GET | /tasks | ✓ | approved | 200 {data, page, total} |
+| GET | /tasks/:id | ✓ | approved | 200 {task} |
+| PATCH | /tasks/:id | ✓ | approved | 200 {task} |
+| DELETE | /tasks/:id | ✓ | approved | 204 |
+| GET | /admin/users | ✓ | admin | 200 {users[]} |
+| PATCH | /admin/users/:id | ✓ | admin | 200 {user} |
+
+GET /tasks params: `status`, `search`, `sort` (manual|dueDate|priority|createdAt), `order` (asc|desc), `page`, `limit`
+- `sort=manual` (default): order by `Task.order ASC`
+- Admin calling GET /tasks with `?scope=all` returns all users' tasks (no userId filter)

@@ -1,0 +1,67 @@
+---
+description: Express API patterns — error envelope, Prisma ownership scoping, Zod validation middleware
+globs: backend/**/*.ts
+alwaysApply: false
+---
+
+# Backend Patterns
+
+## Error envelope — always return this shape on non-2xx
+
+```ts
+// ✅ every error handler
+res.status(400).json({
+  error: { code: "VALIDATION_ERROR", message: "Title is required", details: issues }
+});
+
+// ❌ never
+res.status(400).json({ message: "bad" });
+```
+
+## Ownership — never forget userId scope
+
+```ts
+// ✅ always scope to req.userId
+const task = await prisma.task.findFirst({
+  where: { id: req.params.id, userId: req.userId },
+});
+if (!task) return res.status(404).json({ error: { code: "NOT_FOUND", message: "Task not found" } });
+
+// ❌ never query by id alone
+const task = await prisma.task.findUnique({ where: { id: req.params.id } });
+```
+
+## Zod validation middleware
+
+```ts
+export function validate(schema: ZodSchema) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const result = schema.safeParse(req.body);
+    if (!result.success) {
+      return res.status(400).json({
+        error: { code: "VALIDATION_ERROR", message: "Invalid input", details: result.error.issues }
+      });
+    }
+    req.body = result.data;
+    next();
+  };
+}
+// usage: router.post("/tasks", requireAuth, requireApproved, validate(taskCreateSchema), createTask)
+```
+
+## Cookie config (copy exactly)
+
+```ts
+res.cookie("token", jwt, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+});
+```
+
+## Status codes
+
+- 201 create · 200 read/update · 204 delete/logout
+- 400 validation · 401 unauthenticated · 403 wrong owner · 404 missing
+- Return 404 (not 403) when task exists but belongs to another user — don't leak existence

@@ -1,0 +1,57 @@
+---
+description: Use Bun for all package management and script execution — never npm/yarn/pnpm
+alwaysApply: true
+---
+
+# Package manager — Bun only
+
+This monorepo uses **Bun**. Each app has its own `package.json` in `backend/` and `frontend/`.
+
+## Commands
+
+| Task | Command |
+|------|---------|
+| Install deps | `bun install` |
+| Add dependency | `bun add <pkg>` |
+| Add dev dependency | `bun add -d <pkg>` |
+| Remove | `bun remove <pkg>` |
+| Run script | `bun run <script>` |
+| Run TS file | `bun <file.ts>` |
+| Dev (backend) | `bun run dev` |
+| Dev (frontend) | `bun run dev` |
+
+## Do not use
+
+- `npm install`, `npm add`, `npx`, `yarn`, `pnpm`
+- `package-lock.json` — use `bun.lock` instead
+
+## Where to run commands
+
+```bash
+cd backend && bun install    # API deps
+cd frontend && bun install   # web deps
+```
+
+## Adding packages (examples)
+
+```bash
+# backend runtime dep
+cd backend && bun add express
+
+# backend dev dep
+cd backend && bun add -d @types/express
+
+# frontend
+cd frontend && bun add @tanstack/react-query
+```
+
+## Prisma (backend)
+
+```bash
+cd backend
+bun run db:generate
+bun run db:migrate
+bun run db:seed
+```
+
+Seed script runs via `bun prisma/seed.ts` (Bun executes TypeScript natively).
