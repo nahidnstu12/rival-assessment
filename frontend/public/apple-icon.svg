@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" fill="none" role="img" aria-label="Taskflow">
+  <rect width="180" height="180" rx="40" fill="#6E56CF"/>
+  <path stroke="#fff" stroke-width="10" stroke-linecap="round" d="M52 62h76M52 92h52"/>
+  <path stroke="#fff" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" d="M52 118l16 16L108 94"/>
+</svg>

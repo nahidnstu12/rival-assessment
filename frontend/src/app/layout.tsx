@@ -1,25 +1,29 @@
-"use client";
-
-import { ThemeProvider } from "next-themes";
+import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { AuthProvider } from "@/context/AuthContext";
-import { ToastProvider } from "@/context/ToastContext";
-import { Providers } from "./providers";
+import { RootProviders } from "./root-providers";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: {
+    default: "Taskflow",
+    template: "%s · Taskflow",
+  },
+  description:
+    "A focused task workspace — organize work, track status, and order your day exactly how you want it.",
+  applicationName: "Taskflow",
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/apple-icon.svg", type: "image/svg+xml" }],
+  },
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} antialiased`}>
-        <ThemeProvider attribute="data-theme" defaultTheme="light" enableSystem={false}>
-          <Providers>
-            <AuthProvider>
-              <ToastProvider>{children}</ToastProvider>
-            </AuthProvider>
-          </Providers>
-        </ThemeProvider>
+        <RootProviders>{children}</RootProviders>
       </body>
     </html>
   );
