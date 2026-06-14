@@ -19,11 +19,17 @@ export function useTasks(scope: "mine" | "all" = "mine") {
     limit: 6,
   };
 
-  return useQuery({
-    queryKey: ["tasks", params],
-    queryFn: () => tasksApi.list(params),
-    placeholderData: keepPreviousData,
-  });
+  const queryKey = ["tasks", params] as const;
+
+  return {
+    ...useQuery({
+      queryKey,
+      queryFn: () => tasksApi.list(params),
+      placeholderData: keepPreviousData,
+    }),
+    queryKey,
+    params,
+  };
 }
 
 export function useMyTaskCount() {

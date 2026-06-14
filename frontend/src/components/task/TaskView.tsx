@@ -4,13 +4,14 @@ import { useTaskMutations } from "@/hooks/useTaskMutations";
 import { useTaskFilters } from "@/hooks/useTaskFilters";
 import { useTasks } from "@/hooks/useTasks";
 import { useAuth } from "@/context/AuthContext";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import type { TaskFormValues } from "@/schemas/task.schema";
 import type { Task } from "@/types/task";
 import { AppShell } from "@/components/layout/AppShell";
 import { EmptyState } from "./EmptyState";
 import { Pagination } from "./Pagination";
-import { TaskModal } from "./TaskModal";
+import { SortableTaskList } from "./SortableTaskList";
+import { TaskSheet } from "./TaskSheet";
 import { TaskRow } from "./TaskRow";
 import { TaskSkeleton } from "./TaskSkeleton";
 import { Toolbar } from "./Toolbar";
@@ -22,15 +23,13 @@ type TaskViewProps = {
 export function TaskView({ scope }: TaskViewProps) {
   const { user } = useAuth();
   const defaultSort = scope === "all" ? "createdAt" : "manual";
-  const { search, status, sort, page, setParam, clearFilters } = useTaskFilters(defaultSort);
-  const { data, isLoading, isFetching, isError, refetch } = useTasks(scope);
-  const { create, update, remove, toggleComplete, reorder } = useTaskMutations();
+  const { search, status, sort, page, setParam, clearFilters, setSort } = useTaskFilters(defaultSort);
+  const { data, isLoading, isFetching, isError, refetch, queryKey, params } = useTasks(scope);
+  const { create, update, remove, toggleComplete, reorderTasks } = useTaskMutations();
 
-  const [modalOpen, setModalOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
   const [editTask, setEditTask] = useState<Task | null>(null);
   const [localSearch, setLocalSearch] = useState(search);
-  const dragSrc = useRef<string | null>(null);
-  const [dropTarget, setDropTarget] = useState<{ id: string; below: boolean } | null>(null);
 
   useEffect(() => setLocalSearch(search), [search]);
   useEffect(() => {
@@ -40,7 +39,6 @@ export function TaskView({ scope }: TaskViewProps) {
   }, [localSearch, search, setParam]);
 
   const mineOnly = scope === "mine";
-  const dragEnabled = mineOnly && sort === "manual";
 
   const counts = data?.counts ?? { all: 0, todo: 0, in_progress: 0, done: 0 };
 
@@ -50,29 +48,25 @@ export function TaskView({ scope }: TaskViewProps) {
       ? `${data?.total ?? 0} tasks · all users`
       : `${data?.total ?? 0} tasks · ${user?.email ?? ""}`;
 
-  async function handleSubmit(values: TaskFormValues) {
+  function handleSubmit(values: TaskFormValues) {
     if (editTask) {
-      await update.mutateAsync({ id: editTask.id, data: values });
+      update.mutate({ id: editTask.id, data: values });
     } else {
-      await create.mutateAsync(values);
+      create.mutate(values);
     }
-    setModalOpen(false);
+    setSheetOpen(false);
     setEditTask(null);
   }
 
-  function handleDrop(targetId: string, below: boolean) {
-    const srcId = dragSrc.current;
-    if (!srcId || srcId === targetId || !data) return;
-    const items = [...data.data];
-    const srcIdx = items.findIndex((t) => t.id === srcId);
-    if (srcIdx < 0 || items.findIndex((t) => t.id === targetId) < 0) return;
-    const [src] = items.splice(srcIdx, 1);
-    let idx = items.findIndex((t) => t.id === targetId);
-    if (below) idx += 1;
-    items.splice(idx, 0, src);
-    items.forEach((t, i) => reorder.mutate({ id: t.id, order: i }));
-    dragSrc.current = null;
-    setDropTarget(null);
+  function openEdit(task: Task) {
+    setEditTask(task);
+    setSheetOpen(true);
+  }
+
+  function handleDelete(task: Task) {
+    if (confirm(`Delete "${task.title}"? This can't be undone.`)) {
+      remove.mutate(task.id);
+    }
   }
 
   return (
@@ -86,7 +80,7 @@ export function TaskView({ scope }: TaskViewProps) {
         onSearchChange: setLocalSearch,
         onNewTask: () => {
           setEditTask(null);
-          setModalOpen(true);
+          setSheetOpen(true);
         },
       }}
     >
@@ -105,59 +99,38 @@ export function TaskView({ scope }: TaskViewProps) {
         <EmptyState
           filtered={!!search || status !== "all"}
           onClear={clearFilters}
-          onCreate={mineOnly ? () => setModalOpen(true) : undefined}
+          onCreate={mineOnly ? () => setSheetOpen(true) : undefined}
         />
       )}
       {!isLoading && !isError && data && data.data.length > 0 && (
         <>
-          <div className="task-list">
-            {data.data.map((task) => {
-              const dc =
-                dropTarget?.id === task.id
-                  ? dropTarget.below
-                    ? "drop-below"
-                    : "drop-above"
-                  : dragSrc.current === task.id
-                    ? "dragging"
-                    : "";
-              return (
+          {mineOnly ? (
+            <SortableTaskList
+              tasks={data.data}
+              onReorder={(reordered) => {
+                reorderTasks(reordered, data.data, queryKey, params, {
+                  switchToManual: sort !== "manual",
+                  setSort,
+                });
+              }}
+              onToggle={(task) => toggleComplete.mutate(task)}
+              onEdit={openEdit}
+              onDelete={handleDelete}
+            />
+          ) : (
+            <div className="task-list">
+              {data.data.map((task) => (
                 <TaskRow
                   key={task.id}
                   task={task}
-                  dragEnabled={dragEnabled}
                   showOwner={scope === "all"}
-                  dragClass={dc}
                   onToggle={() => toggleComplete.mutate(task)}
-                  onEdit={() => {
-                    setEditTask(task);
-                    setModalOpen(true);
-                  }}
-                  onDelete={() => {
-                    if (confirm(`Delete "${task.title}"? This can't be undone.`)) {
-                      remove.mutate(task.id);
-                    }
-                  }}
-                  onDragStart={(id) => {
-                    dragSrc.current = id;
-                  }}
-                  onDragEnd={() => {
-                    dragSrc.current = null;
-                    setDropTarget(null);
-                  }}
-                  onDragOver={(e, id) => {
-                    e.preventDefault();
-                    const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
-                    setDropTarget({ id, below: (e.clientY - r.top) / r.height > 0.5 });
-                  }}
-                  onDrop={(e, id) => {
-                    e.preventDefault();
-                    const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
-                    handleDrop(id, (e.clientY - r.top) / r.height > 0.5);
-                  }}
+                  onEdit={() => openEdit(task)}
+                  onDelete={() => handleDelete(task)}
                 />
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          )}
           <Pagination
             page={page}
             total={data.total}
@@ -167,12 +140,12 @@ export function TaskView({ scope }: TaskViewProps) {
         </>
       )}
 
-      <TaskModal
-        open={modalOpen}
+      <TaskSheet
+        open={sheetOpen}
         task={editTask}
         loading={create.isPending || update.isPending}
         onClose={() => {
-          setModalOpen(false);
+          setSheetOpen(false);
           setEditTask(null);
         }}
         onSubmit={handleSubmit}

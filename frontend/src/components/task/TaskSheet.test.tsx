@@ -1,12 +1,12 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import { TaskModal } from "@/components/task/TaskModal";
+import { TaskSheet } from "@/components/task/TaskSheet";
 
-describe("TaskModal", () => {
+describe("TaskSheet", () => {
   it('shows "Title is required" when submitted empty', async () => {
     const user = userEvent.setup();
-    render(<TaskModal open onClose={vi.fn()} onSubmit={vi.fn()} />);
+    render(<TaskSheet open onClose={vi.fn()} onSubmit={vi.fn()} />);
 
     await user.click(screen.getByRole("button", { name: /create task/i }));
 

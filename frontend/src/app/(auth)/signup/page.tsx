@@ -89,7 +89,7 @@ export default function SignupPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-lg bg-violet-600 py-2.5 text-white font-medium hover:bg-violet-700 disabled:opacity-60"
+          className="w-full rounded-lg bg-violet-600 py-2.5 text-white font-medium hover:bg-violet-700 disabled:opacity-60 cursor-pointer"
         >
           {loading ? "Submitting…" : "Request access"}
         </button>
@@ -97,7 +97,7 @@ export default function SignupPage() {
 
       <p className="mt-4 text-center text-sm text-zinc-500">
         Already have an account?{" "}
-        <Link href="/login" className="font-medium text-violet-600 hover:underline">
+        <Link href="/login" className="font-medium text-violet-600 hover:underline cursor-pointer">
           Sign in
         </Link>
       </p>
