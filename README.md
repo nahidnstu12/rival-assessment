@@ -2,6 +2,29 @@
 
 Full-stack task manager built for the Rival assessment. Express + Prisma API, Next.js App Router frontend, JWT cookie auth, URL-driven filters.
 
+## Live demo
+
+| | URL |
+|---|---|
+| **App** | https://rival-assessment-two.vercel.app |
+| **API** | https://taskflow-api-dpco.onrender.com |
+
+Use the **App** URL in the browser. The frontend proxies `/api/*` to the backend.
+
+## Screenshots
+
+**Task edit sheet**
+
+![Edit task — status, priority, calendar](./docs/screenshots/task-edit.png)
+
+**My tasks**
+
+![My tasks — filters, search, drag reorder](./docs/screenshots/tasks.png)
+
+**Admin — user approval**
+
+![Admin users — approve/reject pending accounts](./docs/screenshots/admin-users.png)
+
 ## Prerequisites
 
 - [Bun](https://bun.sh) 1.x (package manager + runtime)
@@ -49,10 +72,10 @@ bun run dev          # http://localhost:3000
 
 ### Demo accounts (after seed)
 
-| Email | Password | Role | Status |
-|-------|----------|------|--------|
-| sabir@rival.io | demo1234 | ADMIN | APPROVED |
-| pending@rival.io | demo1234 | USER | PENDING |
+| Email            | Password | Role  | Status   |
+| ---------------- | -------- | ----- | -------- |
+| sabir@rival.io   | demo1234 | ADMIN | APPROVED |
+| pending@rival.io | demo1234 | USER  | PENDING  |
 
 ## Tests
 
@@ -105,11 +128,11 @@ design-planning/   HTML design reference
 
 ## Scripts reference
 
-| Location | Command | Purpose |
-|----------|---------|---------|
-| backend | `bun run dev` | API with watch |
-| backend | `bun test` | Vitest + supertest |
-| backend | `bun run db:seed` | Demo users + tasks |
-| frontend | `bun run dev` | Next dev server |
-| frontend | `bun test` | RTL component tests |
-| root | `docker compose up -d` | Local Postgres on :5433 |
+| Location | Command                | Purpose                 |
+| -------- | ---------------------- | ----------------------- |
+| backend  | `bun run dev`          | API with watch          |
+| backend  | `bun test`             | Vitest + supertest      |
+| backend  | `bun run db:seed`      | Demo users + tasks      |
+| frontend | `bun run dev`          | Next dev server         |
+| frontend | `bun test`             | RTL component tests     |
+| root     | `docker compose up -d` | Local Postgres on :5433 |
