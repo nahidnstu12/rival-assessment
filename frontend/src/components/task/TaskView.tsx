@@ -1,9 +1,11 @@
 "use client";
 
 import { useTaskMutations } from "@/hooks/useTaskMutations";
+import { useAccess } from "@/hooks/useAccess";
 import { useTaskFilters } from "@/hooks/useTaskFilters";
 import { useTasks } from "@/hooks/useTasks";
 import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { TaskFormValues } from "@/schemas/task.schema";
 import type { Task } from "@/types/task";
@@ -22,8 +24,15 @@ type TaskViewProps = {
 
 export function TaskView({ scope }: TaskViewProps) {
   const { user } = useAuth();
+  const { canFetchAdminTasks } = useAccess();
+  const router = useRouter();
   const defaultSort = scope === "all" ? "createdAt" : "manual";
   const { search, status, sort, page, setParam, clearFilters, setSort } = useTaskFilters(defaultSort);
+
+  useEffect(() => {
+    if (scope === "all" && !canFetchAdminTasks) router.replace("/tasks");
+  }, [scope, canFetchAdminTasks, router]);
+
   const { data, isLoading, isFetching, isError, refetch, queryKey, params } = useTasks(scope);
   const { create, update, remove, toggleComplete, reorderTasks } = useTaskMutations();
 

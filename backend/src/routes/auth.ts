@@ -45,7 +45,8 @@ authRouter.post("/login", validate(loginSchema), async (req, res, next) => {
     }
 
     if (user.status === "PENDING") {
-      return sendError(res, 403, "PENDING_APPROVAL", "Account awaiting approval");
+      setAuthCookie(res, signToken(user.id));
+      return res.json({ user: serializeUser(user), pendingApproval: true });
     }
     if (user.status === "REJECTED") {
       return sendError(res, 403, "ACCOUNT_REJECTED", "This account was not approved");

@@ -2,7 +2,7 @@ import { Router } from "express";
 import { prisma } from "../db.js";
 import { requireApproved, requireAuth } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
-import { taskCreateSchema, taskUpdateSchema } from "../schemas/task.schema.js";
+import { taskCreateSchema, taskListQuerySchema, taskUpdateSchema } from "../schemas/task.schema.js";
 import { sendError } from "../utils/errors.js";
 import { paramId } from "../utils/params.js";
 import {
@@ -46,19 +46,25 @@ tasksRouter.post("/", validate(taskCreateSchema), async (req, res, next) => {
 
 tasksRouter.get("/", async (req, res, next) => {
   try {
+    const parsed = taskListQuerySchema.safeParse(req.query);
+    if (!parsed.success) {
+      return sendError(res, 400, "VALIDATION_ERROR", "Invalid query parameters", parsed.error.issues);
+    }
+    const q = parsed.data;
+
     const query = {
       userId: req.userId!,
       isAdmin: req.userRole === "ADMIN",
-      status: req.query.status as string | undefined,
-      search: req.query.search as string | undefined,
-      sort: req.query.sort as string | undefined,
-      order: req.query.order as string | undefined,
-      scope: req.query.scope as string | undefined,
-      page: req.query.page as string | undefined,
-      limit: req.query.limit as string | undefined,
+      status: q.status,
+      search: q.search,
+      sort: q.sort,
+      order: q.order,
+      scope: q.scope,
+      page: q.page?.toString(),
+      limit: q.limit?.toString(),
     };
     const params = parseListParams(query);
-    const isAllScope = req.userRole === "ADMIN" && req.query.scope === "all";
+    const isAllScope = req.userRole === "ADMIN" && q.scope === "all";
 
     const [result, counts] = await Promise.all([
       listTasks(

@@ -1,17 +1,23 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
+import { useAccess } from "@/hooks/useAccess";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  const { user, isLoading, isPending, logout } = useAuth();
+  const { logout } = useAuth();
+  const { user, isLoading, isPending, isRejected } = useAccess();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    if (isLoading || !user) return;
-    if (user.status === "REJECTED") {
+    if (isLoading) return;
+    if (!user) {
+      router.replace("/login");
+      return;
+    }
+    if (isRejected) {
       logout();
       return;
     }
@@ -21,9 +27,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     if (!isPending && pathname === "/pending") {
       router.replace("/tasks");
     }
-  }, [user, isLoading, isPending, logout, router, pathname]);
+  }, [user, isLoading, isPending, isRejected, logout, router, pathname]);
 
-  if (isLoading) {
+  if (isLoading || !user) {
     return (
       <div className="min-h-screen grid place-items-center text-sm text-[var(--text-muted)]">
         Loading…

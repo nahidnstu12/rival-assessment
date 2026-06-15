@@ -15,5 +15,16 @@ export const taskCreateSchema = z.object({
 
 export const taskUpdateSchema = taskCreateSchema.partial();
 
+export const taskListQuerySchema = z.object({
+  status: z.enum(["all", "todo", "in_progress", "done"]).optional(),
+  search: z.string().trim().max(255).optional(),
+  sort: z.enum(["manual", "priority", "dueDate", "createdAt"]).optional(),
+  order: z.enum(["asc", "desc"]).optional(),
+  scope: z.enum(["mine", "all"]).optional(),
+  page: z.coerce.number().int().positive().optional(),
+  limit: z.coerce.number().int().min(1).max(50).optional(),
+});
+
 export type TaskCreateInput = z.infer<typeof taskCreateSchema>;
 export type TaskUpdateInput = z.infer<typeof taskUpdateSchema>;
+export type TaskListQueryInput = z.infer<typeof taskListQuerySchema>;

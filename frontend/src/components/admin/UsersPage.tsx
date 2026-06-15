@@ -3,6 +3,7 @@
 import { useToast } from "@/context/ToastContext";
 import { adminApi } from "@/lib/api/admin";
 import { useAdminUsers } from "@/hooks/useAdminUsers";
+import { useAccess } from "@/hooks/useAccess";
 import { useAuth } from "@/context/AuthContext";
 import { avatarColor, initials } from "@/lib/utils";
 import type { AdminUser } from "@/types/task";
@@ -92,15 +93,15 @@ function UserRow({
 }
 
 export function UsersPage() {
-  const { isAdmin } = useAuth();
+  const { canFetchAdmin } = useAccess();
   const router = useRouter();
   const toast = useToast();
   const qc = useQueryClient();
   const { data: users = [], isLoading, isError, refetch } = useAdminUsers();
 
   useEffect(() => {
-    if (!isAdmin) router.replace("/tasks");
-  }, [isAdmin, router]);
+    if (!canFetchAdmin) router.replace("/tasks");
+  }, [canFetchAdmin, router]);
 
   const mutateStatus = useMutation({
     mutationFn: ({ id, status }: { id: string; status: "APPROVED" | "REJECTED" }) =>

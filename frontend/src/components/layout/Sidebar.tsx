@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
+import { useAccess } from "@/hooks/useAccess";
 import { usePendingCount } from "@/hooks/useAdminUsers";
 import { useMyTaskCount } from "@/hooks/useTasks";
 import { avatarColor, initials, roleLabel } from "@/lib/utils";
@@ -14,7 +15,8 @@ type SidebarProps = {
 };
 
 export function Sidebar({ restricted }: SidebarProps) {
-  const { user, isAdmin, logout } = useAuth();
+  const { user, logout } = useAuth();
+  const { canFetchTasks, canFetchAdmin } = useAccess();
   const pathname = usePathname();
   const { data: taskCount = 0 } = useMyTaskCount();
   const { data: pendingCount = 0 } = usePendingCount();
@@ -52,10 +54,10 @@ export function Sidebar({ restricted }: SidebarProps) {
       >
         <LayoutList size={16} strokeWidth={2} className="nav-icon" />
         My tasks
-        <span className="nav-count">{taskCount}</span>
+        {canFetchTasks && !restricted && <span className="nav-count">{taskCount}</span>}
       </Link>
 
-      {isAdmin && !restricted && (
+      {canFetchAdmin && !restricted && (
         <>
           <div className="text-[11px] uppercase tracking-wider text-[var(--text-subtle)] font-semibold px-2 pt-3.5 pb-1.5">
             Administration
