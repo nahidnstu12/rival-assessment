@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mazharul Islam Nahid — Resume</title>
+  <style>
+    @page { size: A4; margin: 14mm 16mm; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Calibri, "Segoe UI", Arial, sans-serif;
+      font-size: 10.5pt; line-height: 1.4; color: #000; background: #fff;
+      max-width: 210mm; margin: 0 auto; padding: 14mm 16mm;
+    }
+    @media print {
+      body { padding: 0; }
+      a { color: #000; text-decoration: none; }
+      .block { break-inside: avoid; }
+    }
+    h1 { font-size: 20pt; font-weight: 700; }
+    .headline { font-size: 11pt; margin-top: 2px; }
+    .contact { margin-top: 8px; font-size: 9.5pt; line-height: 1.6; }
+    .contact a { color: #1155cc; text-decoration: none; }
+    section { margin-top: 12px; }
+    h2 {
+      font-size: 11pt; font-weight: 700; text-transform: uppercase;
+      border-bottom: 1px solid #000; padding-bottom: 2px; margin-bottom: 6px;
+    }
+    p, li { color: #111; }
+    .job, .project { margin-bottom: 10px; }
+    .row { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .title { font-weight: 700; }
+    .meta { font-size: 9.5pt; white-space: nowrap; }
+    .company { font-weight: 600; margin: 2px 0 4px; }
+    .company a { color: #1155cc; text-decoration: none; }
+    ul { margin: 0 0 0 18px; }
+    li { margin-bottom: 2px; }
+    .tech { font-size: 9.5pt; margin-top: 3px; }
+    .skill-line { margin-bottom: 3px; font-size: 10pt; }
+    .skill-line strong { font-weight: 700; }
+    .project-head { font-weight: 700; }
+    .project-links { font-size: 9.5pt; margin: 2px 0 4px; }
+    .project-links a { color: #1155cc; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <header class="block">
+    <h1>Mazharul Islam Nahid</h1>
+    <p class="headline">Software Engineer</p>
+    <p class="contact">
+      01832409825 |
+      <a href="mailto:nahid.dev19@gmail.com">nahid.dev19@gmail.com</a> |
+      <a href="https://github.com/nahidnstu12">GitHub</a> |
+      <a href="https://gitlab.com/nahid-dev">GitLab</a> |
+      <a href="https://www.linkedin.com/in/nahid-dev/">LinkedIn</a> |
+      <a href="https://nahid-portfolio.vercel.app/">Portfolio</a> |
+      <a href="https://leetcode.com/nahid-dev">LeetCode</a>
+    </p>
+  </header>
+
+  <section class="block">
+    <h2>Summary</h2>
+    <p>
+      Full-stack engineer with 4+ years building REST APIs and PostgreSQL-backed SaaS with Next.js, React,
+      TypeScript, and Tailwind — from payment integrations and server-side validation to GitHub Actions CI/CD.
+      AI-native mindset: work AI tooling into planning, implementation, and review to ship faster while
+      holding the bar on readable, maintainable production code.
+    </p>
+  </section>
+
+  <section>
+    <h2>Experience</h2>
+
+    <article class="job block">
+      <div class="row">
+        <span class="title">Deputy Team Lead – Full Stack Developer</span>
+        <span class="meta">Jan 2025 – Present</span>
+      </div>
+      <p class="company"><a href="https://radiustheme.com">RadiusTheme</a> · Dhaka, Bangladesh</p>
+      <ul>
+        <li>Lead Node.js team on Radius Directory, a multi-tenant classified SaaS (Next.js, Prisma, PostgreSQL)</li>
+        <li>Own architecture across 59 Prisma models and 51+ server actions; Page Builder, payments (Stripe, SSLCommerz, PayPal), 16 Graphile Worker jobs</li>
+        <li>Reduced database queries by 60% with Redis caching; improved Page Builder drag-and-drop performance by 40%</li>
+        <li>Mentor junior developers through code reviews, pair programming, and sprint planning</li>
+      </ul>
+      <p class="tech">Tech: Next.js, React, Node.js, TypeScript, Prisma, PostgreSQL, Redis, Zustand, Tailwind CSS, shadcn/ui</p>
+    </article>
+
+    <article class="job block">
+      <div class="row">
+        <span class="title">Software Engineer</span>
+        <span class="meta">May 2022 – Dec 2024</span>
+      </div>
+      <p class="company"><a href="https://softbdltd.com/">Softbd LTD</a> · Dhaka, Bangladesh</p>
+      <ul>
+        <li>Built responsive interfaces with React, Next.js, TypeScript, and Tailwind for government and enterprise projects</li>
+        <li>Improved page load performance by 40% through SSR, code splitting, and SWR caching</li>
+        <li>Contributed to National Portal Framework (NPF) theme engine powering 54,000+ government websites</li>
+        <li>Developed reusable admin tools: dynamic data tables, resource loaders, and CMS widgets</li>
+      </ul>
+      <p class="tech">Tech: React, Next.js, TypeScript, MUI, Tailwind, Node.js, Express, TypeORM, MySQL, MongoDB, MinIO</p>
+    </article>
+  </section>
+
+  <section class="block">
+    <h2>Skills</h2>
+    <p class="skill-line"><strong>Languages:</strong> JavaScript (ES6+), TypeScript</p>
+    <p class="skill-line"><strong>Frontend:</strong> React, Next.js, Zustand, Redux Toolkit, Tailwind CSS, Material UI, shadcn/ui, SWR, Zod, Jest</p>
+    <p class="skill-line"><strong>Backend:</strong> Node.js, Express, Next.js Server Actions, Graphile Worker, Go (Gin, GORM — basic)</p>
+    <p class="skill-line"><strong>Database &amp; ORM:</strong> PostgreSQL, MySQL, MongoDB, Prisma, TypeORM, Mongoose</p>
+    <p class="skill-line"><strong>Tools:</strong> Docker, Git, GitHub, GitHub Actions, PM2, Vercel, Figma, Postman, MinIO</p>
+    <p class="skill-line"><strong>Other:</strong> Notion, ClickUp, Jira</p>
+  </section>
+
+  <section>
+    <h2>Projects</h2>
+
+    <article class="project block">
+      <p class="project-head">Radius Directory — SaaS</p>
+      <p class="project-links"><a href="https://bikribd.com/">bikribd.com</a> · Jan 2025 – Present</p>
+      <ul>
+        <li>Multi-tenant classified marketplace and business directory platform</li>
+        <li>Custom Page Builder, Menu Builder, and multi-gateway payments (Stripe, SSLCommerz, PayPal)</li>
+        <li>16 Graphile Worker background jobs; reporting dashboards; Pusher, AWS S3, Twilio integrations</li>
+      </ul>
+      <p class="tech">Tech: Next.js, React, Prisma, PostgreSQL, Graphile Worker, GitHub Actions</p>
+    </article>
+
+    <article class="project block">
+      <p class="project-head">Digital Land Record and Management System (DLRMS)</p>
+      <p class="project-links"><a href="https://dlrms.land.gov.bd/">dlrms.land.gov.bd</a> · Apr 2024 – Dec 2024</p>
+      <ul>
+        <li>Government land records digitization; citizen khatian entry and correction workflows</li>
+        <li>Node.js REST API with TypeORM and Oracle handling millions of land records</li>
+      </ul>
+      <p class="tech">Tech: React, Next.js, TypeORM, Oracle, Redis, RabbitMQ</p>
+    </article>
+
+    <article class="project block">
+      <p class="project-head">National Portal Framework (NPF)</p>
+      <p class="project-links"><a href="https://bangladesh.gov.bd/">bangladesh.gov.bd</a> · Dec 2023 – Dec 2024</p>
+      <ul>
+        <li>Theme customization system powering 54,000+ Bangladeshi government websites</li>
+        <li>Express + EJS + React composition, Shadow DOM drag-and-drop, MongoDB + MinIO backend</li>
+      </ul>
+      <p class="tech">Tech: Express.js, EJS, React, Node.js, MongoDB, MinIO, TypeScript</p>
+    </article>
+  </section>
+
+  <section class="block">
+    <h2>Education</h2>
+    <div class="row">
+      <span class="title">BSc. Computer Science and Telecommunication Engineering</span>
+      <span class="meta">2017 – 2022</span>
+    </div>
+    <p>Noakhali Science and Technology University · CGPA 3.39 / 4.00</p>
+  </section>
+
+  <section class="block">
+    <h2>Certification</h2>
+    <p>
+      <a href="https://learnwithsumit.com/certificates/verify/LWSCTXN-FTIOH0BP">LWS (think-in-a-redux-way) Certificate</a>
+    </p>
+  </section>
+</body>
+</html>
