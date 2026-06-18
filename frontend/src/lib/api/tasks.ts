@@ -1,4 +1,5 @@
 import { api } from "@/lib/api";
+import type { TaskActivityPage } from "@/types/activity";
 import type { Task, TaskListParams, TaskListResponse } from "@/types/task";
 
 function toQuery(params: TaskListParams) {
@@ -23,4 +24,11 @@ export const tasksApi = {
   update: (id: string, data: Partial<Task>) =>
     api<{ task: Task }>(`/tasks/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
   delete: (id: string) => api<void>(`/tasks/${id}`, { method: "DELETE" }),
+  activity: (id: string, params: { limit?: number; cursor?: string } = {}) => {
+    const q = new URLSearchParams();
+    if (params.limit) q.set("limit", String(params.limit));
+    if (params.cursor) q.set("cursor", params.cursor);
+    const s = q.toString();
+    return api<TaskActivityPage>(`/tasks/${id}/activity${s ? `?${s}` : ""}`);
+  },
 };

@@ -3,6 +3,7 @@ import cors from "cors";
 import express from "express";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { router } from "./router.js";
+import { LOCAL_UPLOAD_ROOT } from "./storage/index.js";
 
 export function createApp() {
   const app = express();
@@ -15,6 +16,11 @@ export function createApp() {
   );
   app.use(express.json());
   app.use(cookieParser());
+
+  // Serve files written by the LocalAdapter. Inactive when STORAGE_DRIVER=cloudinary
+  // (no files land here), but harmless to mount unconditionally.
+  app.use("/uploads", express.static(LOCAL_UPLOAD_ROOT));
+
   app.use(router);
   app.use(errorHandler);
 

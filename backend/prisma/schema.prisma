@@ -29,30 +29,80 @@ enum Priority {
   HIGH
 }
 
+enum TaskActivityAction {
+  CREATED
+  UPDATED
+  STATUS_CHANGED
+  DELETED
+  ATTACHMENT_ADDED
+  ATTACHMENT_REMOVED
+}
+
+enum Storage {
+  LOCAL
+  CLOUDINARY
+}
+
 model User {
-  id        String     @id @default(cuid())
-  name      String
-  email     String     @unique
-  password  String
-  role      Role       @default(USER)
-  status    UserStatus @default(PENDING)
-  tasks     Task[]
-  createdAt DateTime   @default(now())
+  id          String           @id @default(cuid())
+  name        String
+  email       String           @unique
+  password    String
+  role        Role             @default(USER)
+  status      UserStatus       @default(PENDING)
+  tasks       Task[]
+  activities  TaskActivity[]   @relation("ActorActivities")
+  attachments TaskAttachment[] @relation("UploaderAttachments")
+  createdAt   DateTime         @default(now())
 }
 
 model Task {
-  id          String    @id @default(cuid())
+  id          String           @id @default(cuid())
   title       String
   description String?
-  status      Status    @default(TODO)
-  priority    Priority  @default(MEDIUM)
+  status      Status           @default(TODO)
+  priority    Priority         @default(MEDIUM)
   dueDate     DateTime?
-  order       Int       @default(0)
+  order       Int              @default(0)
   userId      String
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activities  TaskActivity[]
+  attachments TaskAttachment[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 
   @@index([userId, order])
   @@index([userId, status])
+}
+
+model TaskActivity {
+  id        String             @id @default(cuid())
+  taskId    String
+  actorId   String
+  action    TaskActivityAction
+  changes   Json?
+  createdAt DateTime           @default(now())
+
+  task  Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  actor User @relation("ActorActivities", fields: [actorId], references: [id])
+
+  @@index([taskId, createdAt])
+}
+
+model TaskAttachment {
+  id         String   @id @default(cuid())
+  taskId     String
+  uploaderId String
+  filename   String
+  url        String
+  publicId   String?
+  size       Int
+  mimeType   String
+  storage    Storage
+  createdAt  DateTime @default(now())
+
+  task     Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  uploader User @relation("UploaderAttachments", fields: [uploaderId], references: [id])
+
+  @@index([taskId, createdAt])
 }

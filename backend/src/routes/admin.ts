@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { prisma } from "../db.js";
+import { emit } from "../events/bus.js";
 import { requireAdmin, requireAuth } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
 import { userStatusUpdateSchema } from "../schemas/user.schema.js";
@@ -60,6 +61,15 @@ adminRouter.patch("/users/:id", validate(userStatusUpdateSchema), async (req, re
         createdAt: true,
       },
     });
+
+    // Emit only on transitions to a final state so the target user's pending
+    // screen / login state flips live.
+    if (user.status === "APPROVED" && existing.status !== "APPROVED") {
+      emit({ type: "user.approved", userId: user.id, actorId: req.userId! });
+    }
+    if (user.status === "REJECTED" && existing.status !== "REJECTED") {
+      emit({ type: "user.rejected", userId: user.id, actorId: req.userId! });
+    }
 
     res.json({
       user: { ...user, createdAt: user.createdAt.toISOString() },

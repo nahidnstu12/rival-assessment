@@ -136,6 +136,7 @@ export function useTaskMutations() {
           ? old.data.map((t) => (t.id === ctx?.tempId ? task : t))
           : old.data,
       }));
+      qc.invalidateQueries({ queryKey: ["task", task.id, "activity"] });
       toast.show("Task created");
     },
     onError: (_err, _data, ctx) => {
@@ -187,6 +188,7 @@ export function useTaskMutations() {
         }
         return { ...old, data: nextData };
       });
+      qc.invalidateQueries({ queryKey: ["task", task.id, "activity"] });
       toast.show("Changes saved");
     },
     onError: (_err, _vars, ctx) => {
@@ -245,6 +247,7 @@ export function useTaskMutations() {
       return { prev, task };
     },
     onSuccess: (_res, task) => {
+      qc.invalidateQueries({ queryKey: ["task", task.id, "activity"] });
       toast.show(task.status === "DONE" ? "Marked active" : "Task completed");
     },
     onError: (_err, _task, ctx) => {

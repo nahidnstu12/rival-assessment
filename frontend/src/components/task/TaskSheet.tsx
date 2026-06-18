@@ -7,6 +7,8 @@ import { Controller, useForm } from "react-hook-form";
 import { taskDefaults, taskSchema, type TaskFormValues } from "@/schemas/task.schema";
 import type { Task } from "@/types/task";
 import { todayISO } from "@/lib/utils";
+import { ActivityList } from "./ActivityList";
+import { AttachmentsSection } from "./AttachmentsSection";
 import { PRIORITY_OPTIONS, STATUS_OPTIONS } from "./TaskMetaIcons";
 import { InlineDatePicker } from "@/components/ui/InlineDatePicker";
 
@@ -158,6 +160,13 @@ export function TaskSheet({ open, task, loading, onClose, onSubmit }: TaskSheetP
               {loading ? "Saving…" : isEdit ? "Save changes" : "Create task"}
             </button>
           </div>
+
+          {isEdit && task?.id && (
+            <>
+              <AttachmentsSection taskId={task.id} />
+              <ActivityList taskId={task.id} />
+            </>
+          )}
         </form>
       </aside>
     </div>

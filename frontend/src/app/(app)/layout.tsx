@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/context/AuthContext";
 import { useAccess } from "@/hooks/useAccess";
+import { useEventStream } from "@/hooks/useEventStream";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -10,6 +11,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, isLoading, isPending, isRejected } = useAccess();
   const router = useRouter();
   const pathname = usePathname();
+
+  // Single SSE connection for this tab; opens once user is loaded,
+  // closes on logout (when user → null).
+  useEventStream();
 
   useEffect(() => {
     if (isLoading) return;
